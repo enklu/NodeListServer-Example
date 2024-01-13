@@ -67,14 +67,18 @@ namespace NodeListServer
 
                 yield return requestRunner.SendWebRequest();
 
-                if (requestRunner.result == UnityWebRequest.Result.Success)
+                if (requestRunner.isHttpError) 
                 {
-                    // Invoke the data received event.
-                    OnServerListRetrieved?.Invoke(JsonUtility.FromJson<ServerListResponse>(requestRunner.downloadHandler.text.Trim()));
+                    Debug.LogError($"NodeLS Client: Error processing request. Status returned was {requestRunner.error}.");
+                }
+                else if (requestRunner.isNetworkError)
+                {
+                    Debug.LogError($"NodeLS Client: Network error processing request");
                 }
                 else
                 {
-                    Debug.LogError($"NodeLS Client: Error processing request. Status returned was {requestRunner.result}.");
+                    // Invoke the data received event.
+                    OnServerListRetrieved?.Invoke(JsonUtility.FromJson<ServerListResponse>(requestRunner.downloadHandler.text.Trim()));
                 }
             }
 
@@ -116,14 +120,18 @@ namespace NodeListServer
             {
                 yield return requestRunner.SendWebRequest();
 
-                if (requestRunner.result == UnityWebRequest.Result.Success)
+                if (requestRunner.isHttpError) 
                 {
-                    // It works!
-                    OnServerRegistered?.Invoke(requestRunner.downloadHandler.text.Trim());
+                    Debug.LogError($"NodeLS Client: Error processing request. Status returned was {requestRunner.error}.");
+                }
+                else if (requestRunner.isNetworkError)
+                {
+                    Debug.LogError($"NodeLS Client: Network error processing request");
                 }
                 else
                 {
-                    Debug.LogError($"NodeLS Client: Error processing register request. Status returned was {requestRunner.result}.");
+                    // It works!
+                    OnServerRegistered?.Invoke(requestRunner.downloadHandler.text.Trim());
                 }
             }
 
@@ -147,14 +155,18 @@ namespace NodeListServer
             {
                 yield return requestRunner.SendWebRequest();
 
-                if (requestRunner.result == UnityWebRequest.Result.Success)
+                if (requestRunner.isHttpError) 
                 {
-                    // It works!
-                    OnServerRemoved.Invoke();
+                    Debug.LogError($"NodeLS Client: Error processing request. Status returned was {requestRunner.error}.");
+                }
+                else if (requestRunner.isNetworkError)
+                {
+                    Debug.LogError($"NodeLS Client: Network error processing request");
                 }
                 else
                 {
-                    Debug.LogError($"NodeLS Client: Error processing deregister request. Status returned was {requestRunner.result}.");
+                    // It works!
+                    OnServerRemoved.Invoke();
                 }
             }
         }
